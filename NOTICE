@@ -1,0 +1,27 @@
+docx-smart-format
+Copyright 2026 yaya200325
+
+This product includes software developed by yaya200325 and contributors.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+see the LICENSE file in the root of this repository for the full text.
+
+----
+
+The local engine binary `engine/runtime/docx-auto-template-engine.exe` is a
+.NET self-contained deployment. Its source code lives in `engine/src/`. The
+runtime binary is not committed to source control; it is built on demand or
+downloaded from GitHub Releases. See `CONTRIBUTING.md` for build instructions.
+
+The engine uses the following third-party components, distributed under their
+respective licenses (see each project's repository for details):
+
+- .NET Runtime / BCL libraries — MIT License, Copyright (c) .NET Foundation
+  and Contributors. https://github.com/dotnet/runtime
+- DocumentFormat.OpenXml — MIT License, Copyright (c) .NET Foundation and
+  Contributors. https://github.com/dotnet/Open-XML-SDK
+
+If you redistribute a built binary of `docx-auto-template-engine.exe`, you
+must comply with the licenses of all bundled .NET runtime components. The
+.NET self-contained deployment redistribution terms are documented at
+https://learn.microsoft.com/dotnet/core/deploying/.

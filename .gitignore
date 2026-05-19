@@ -1,0 +1,53 @@
+# engine runtime artifacts — distributed via GitHub Releases, not committed
+engine/runtime/
+
+# .NET build outputs
+engine/src/bin/
+engine/src/obj/
+**/bin/
+**/obj/
+
+# .NET user-specific files
+*.user
+*.suo
+*.userprefs
+*.usertasks
+
+# Visual Studio / Rider / VS Code
+.vs/
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+.env/
+venv/
+env/
+
+# OS junk
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Logs and temp
+*.log
+*.tmp
+*.bak
+*.swp
+*~
+
+# Test outputs / scratch
+out/
+tmp/
+.tmp/
+scratch/
+
+# Output artifacts from running the skill locally
+*.result.docx
+analysis.json.tmp

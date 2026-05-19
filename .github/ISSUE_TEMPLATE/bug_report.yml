@@ -1,0 +1,114 @@
+name: 🐛 Bug 反馈 / Bug report
+description: 报告一个可以复现的问题
+title: "[Bug] "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢你花时间反馈 bug。请尽量填写下列字段，能减少回环沟通成本。
+
+        > 安全相关问题请走 [SECURITY.md](../../SECURITY.md) 私下渠道，**不要在公开 Issue 中提交**。
+
+  - type: checkboxes
+    id: pre-checks
+    attributes:
+      label: 提交前检查
+      options:
+        - label: 我已搜索过现有 Issue（含 closed），没有重复。
+          required: true
+        - label: 我能在最新的 release 或 main 分支上复现这个问题。
+          required: true
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: 现象描述
+      description: 一句话讲清楚发生了什么、和你预期的差别。
+      placeholder: |
+        例：对带横向插页的 docx 跑 apply 后，左侧竖排页码漂到了页眉位置。
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: 复现步骤
+      description: 列出能在干净环境上复现的最小步骤。
+      placeholder: |
+        1. 准备 input.docx（结构：……）
+        2. 执行 `docx-auto-template-engine.exe analyze ...`
+        3. LLM 生成 decision.json（脱敏后附在下方）
+        4. 执行 `docx-auto-template-engine.exe apply ...`
+        5. 看到 ……
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: 预期结果
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: 实际结果
+    validations:
+      required: true
+
+  - type: input
+    id: skill-version
+    attributes:
+      label: docx-smart-format 版本
+      placeholder: 例 v0.1.0 / commit SHA
+    validations:
+      required: true
+
+  - type: dropdown
+    id: mode
+    attributes:
+      label: 涉及哪种模式
+      options:
+        - 模式一（analyze + apply 基于现有 docx）
+        - 模式二（render 从零生成）
+        - 仅 validate_decision.py 校验
+        - 文档 / 规则问题
+        - 其他
+    validations:
+      required: true
+
+  - type: input
+    id: os
+    attributes:
+      label: 操作系统与版本
+      placeholder: 例 Windows 11 Pro 26100
+    validations:
+      required: true
+
+  - type: input
+    id: word-version
+    attributes:
+      label: 用于验证 .docx 的软件
+      placeholder: 例 Microsoft Word 365 / WPS 12 / LibreOffice 24
+
+  - type: textarea
+    id: decision
+    attributes:
+      label: decision.json / RenderSpec（可选，请脱敏）
+      description: |
+        粘贴最小可复现的 JSON 片段。**请删除真实姓名、学号、机构等敏感信息。**
+      render: json
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: 错误输出 / stderr
+      render: shell
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: 其他信息
+      description: 截图、相关 PR、相关 Issue 等。

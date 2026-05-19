@@ -1,0 +1,4 @@
+interface:
+  display_name: "DOCX Smart Format"
+  short_description: "读取 docx 或从零生成 docx：LLM 出格式决策，本地引擎写回（仅 Windows x64）"
+  default_prompt: "读取 .docx 或从零生成 .docx：LLM 判断文档类型、结构与行内格式语义，输出格式决策；调用本地引擎 docx-auto-template-engine 执行 analyze / apply / render，输出新的 .docx。"

@@ -1,0 +1,70 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate-decision:
+    name: Validate sample decision JSON
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Validate sample-decision.json
+        run: python scripts/validate_decision.py scripts/sample-decision.json
+
+  build-engine:
+    name: Build engine (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            rid: win-x64
+          - os: ubuntu-latest
+            rid: linux-x64
+          - os: macos-latest
+            rid: osx-arm64
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Restore
+        run: dotnet restore engine/src/docx-auto-template-engine.csproj
+
+      - name: Build
+        run: dotnet build engine/src/docx-auto-template-engine.csproj -c Release --no-restore
+
+      - name: Publish (self-contained, ${{ matrix.rid }})
+        run: |
+          dotnet publish engine/src/docx-auto-template-engine.csproj `
+            -c Release `
+            -r ${{ matrix.rid }} `
+            --self-contained true `
+            -p:PublishSingleFile=false `
+            -o publish-${{ matrix.rid }}
+        shell: pwsh
+
+      - name: Smoke test (Windows only — engine currently Windows-targeted)
+        if: matrix.os == 'windows-latest'
+        run: |
+          $exe = "publish-${{ matrix.rid }}/docx-auto-template-engine.exe"
+          if (-not (Test-Path $exe)) {
+            Write-Error "Engine binary not found at $exe"
+            exit 1
+          }
+          Write-Host "Engine built: $exe"
+        shell: pwsh

@@ -1,0 +1,86 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag to publish (e.g. v0.1.0)"
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    name: Build & attach (${{ matrix.rid }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            rid: win-x64
+          - os: ubuntu-latest
+            rid: linux-x64
+          - os: macos-latest
+            rid: osx-arm64
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Resolve tag
+        id: tag
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "tag=${{ github.event.inputs.tag }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "tag=${GITHUB_REF#refs/tags/}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Publish self-contained ${{ matrix.rid }}
+        shell: pwsh
+        run: |
+          dotnet publish engine/src/docx-auto-template-engine.csproj `
+            -c Release `
+            -r ${{ matrix.rid }} `
+            --self-contained true `
+            -p:PublishSingleFile=false `
+            -o engine/runtime
+
+      - name: Stage skill payload
+        shell: pwsh
+        run: |
+          $staging = "staging/docx-smart-format"
+          New-Item -ItemType Directory -Force -Path $staging | Out-Null
+          Copy-Item -Recurse -Force SKILL.md, README.md, LICENSE, NOTICE, CHANGELOG.md $staging
+          Copy-Item -Recurse -Force agents, references, scripts $staging
+          New-Item -ItemType Directory -Force -Path "$staging/engine" | Out-Null
+          Copy-Item -Recurse -Force engine/runtime "$staging/engine/runtime"
+
+      - name: Zip payload
+        shell: pwsh
+        run: |
+          $tag = "${{ steps.tag.outputs.tag }}"
+          $name = "docx-smart-format-$tag-${{ matrix.rid }}.zip"
+          Compress-Archive -Path staging/docx-smart-format/* -DestinationPath $name
+          "ASSET_NAME=$name" | Out-File -FilePath $env:GITHUB_ENV -Append
+
+      - name: Upload to Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.tag.outputs.tag }}
+          name: ${{ steps.tag.outputs.tag }}
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+          files: ${{ env.ASSET_NAME }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

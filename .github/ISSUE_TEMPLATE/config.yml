@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 🔒 安全漏洞
+    url: https://github.com/yaya200325/docx-smart-format/security/advisories/new
+    about: 安全漏洞请走 Private vulnerability reporting，不要在公开 Issue 中提交。详见 SECURITY.md。
+  - name: 💬 使用问题与讨论
+    url: https://github.com/yaya200325/docx-smart-format/discussions
+    about: 一般使用问题、模板选型、决策 JSON 写法疑问请到 Discussions 区。
