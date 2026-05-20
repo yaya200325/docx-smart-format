@@ -244,6 +244,8 @@ LLM 在 apply 模式下还需要：
 
 ## 公式决策 `equationDecisions`
 
+> **本节仅适用于 apply 模式**（源 docx 里已存在的公式对象怎么调整对齐 / 编号 / 间距，OMML 内容透传不改）。render 模式从零生成公式见 [equation-omml.md](equation-omml.md)。
+
 用于控制原生公式对象。
 
 示例：
